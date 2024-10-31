@@ -1,0 +1,40 @@
+/**
+ * 
+ * @returns {Promise<Object>} quete information
+ */
+const fetchQuote = async() => {
+    const response = await fetch('https://gateway.marvel.com:443/v1/public/stories?ts=1&apikey=03a12ae7018de509060fec653020362c&hash=b126a3143cb84056246b0497f0508300',{method: 'GET'});
+    const data = await response.json();
+    console.log(data.data.results.length.toString());
+    const indice = Math.floor(Math.random() * data.data.results.length) + 1;
+    return data.data.results[indice];
+}
+
+/**
+ * 
+ * @param {HTMLDivElement} element 
+ */
+export const MarvelApp = async (element) => {
+    const elementH1 = document.querySelector('#app-title');
+    if (elementH1) elementH1.innerHTML = 'Marvel App';
+    element.innerHTML = 'Loading...';
+
+    const quoteLabel = document.createElement('blockquote');
+    const authoLabel = document.createElement('h3');
+    const nextQuoteLabel = document.createElement('button');
+    nextQuoteLabel.innerText = 'Next';
+
+    const render = (quote) =>{
+        quoteLabel.innerHTML = quote.title;
+        authoLabel.innerHTML = quote.type;
+        element.replaceChildren( quoteLabel, authoLabel, nextQuoteLabel);
+    }
+
+    nextQuoteLabel.addEventListener('click', () =>{
+        element.innerHTML = 'Loading...';
+        fetchQuote().then(render);
+        
+    });
+
+    fetchQuote().then(render);
+}
